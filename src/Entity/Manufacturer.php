@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /** A manufacturer */
 #[ORM\Entity(repositoryClass: ManufacturerRepository::class)]
@@ -22,18 +23,22 @@ class Manufacturer
 
     /** The name of the manufacturer  */
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $name = null;
 
     /** The description of the manufacturer  */
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $description = null;
 
     /** The country code of the manufacturer  */
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $countryCode = null;
 
     /** The date that the manufacturer was listed */
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?DateTimeImmutable $listedDate = null;
 
     #[ORM\OneToMany(mappedBy: 'manufacturer', targetEntity: Product::class, cascade: ["persist", "remove"])]
