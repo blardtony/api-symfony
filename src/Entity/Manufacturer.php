@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\ManufacturerRepository;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -48,6 +49,7 @@ class Manufacturer
     private ?DateTimeImmutable $listedDate = null;
 
     #[ORM\OneToMany(mappedBy: 'manufacturer', targetEntity: Product::class, cascade: ["persist", "remove"])]
+    #[ApiSubresource]
     private Collection $products;
 
     public function __construct()
