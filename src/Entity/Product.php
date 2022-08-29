@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ProductRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -106,9 +107,13 @@ class Product
         return $this->issueDate;
     }
 
-    public function setIssueDate(\DateTimeImmutable $issueDate): self
+    public function setIssueDate(\DatetimeInterface $issueDate): self
     {
-        $this->issueDate = $issueDate;
+        if($issueDate instanceof DatetimeImmutable){
+            $this->issueDate = $issueDate;
+            return $this;
+        }
+        $this->issueDate = DateTimeImmutable::createFromInterface($issueDate);
 
         return $this;
     }
