@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\SearchFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ProductRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -15,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[
     ApiResource(
+        attributes: ["pagination_items_per_page" => 5],
         denormalizationContext: ['groups' => ['product.write']],
         normalizationContext: ['groups' => ['product.read']]
     ),
@@ -57,7 +59,7 @@ class Product
     /** The date of issue of the product */
     #[ORM\Column]
     #[Assert\NotNull]
-    #[Groups(['product.read'])]
+    #[Groups(['product.read', 'product.write'])]
     private ?\DateTimeImmutable $issueDate = null;
 
     /** The MPN (manufacturer part number) of the product */
@@ -68,7 +70,8 @@ class Product
 
     /** The manufacturer of the product */
     #[ORM\ManyToOne(inversedBy: 'products')]
-    #[Groups(['product.read'])]
+    #[Groups(['product.read', 'product.write'])]
+    #[Assert\NotNull]
     private ?Manufacturer $manufacturer = null;
 
 
@@ -106,9 +109,13 @@ class Product
         return $this->issueDate;
     }
 
-    public function setIssueDate(\DateTimeImmutable $issueDate): self
+    public function setIssueDate(\DatetimeInterface $issueDate): self
     {
-        $this->issueDate = $issueDate;
+        if($issueDate instanceof DatetimeImmutable){
+            $this->issueDate = $issueDate;
+            return $this;
+        }
+        $this->issueDate = DateTimeImmutable::createFromInterface($issueDate);
 
         return $this;
     }

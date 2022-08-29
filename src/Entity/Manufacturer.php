@@ -103,9 +103,13 @@ class Manufacturer
         return $this->listedDate;
     }
 
-    public function setListedDate(DateTimeImmutable $listedDate): self
+    public function setListedDate(\DateTimeInterface $listedDate): self
     {
-        $this->listedDate = $listedDate;
+        if($listedDate instanceof DatetimeImmutable){
+            $this->listedDate = $listedDate;
+            return $this;
+        }
+        $this->listedDate = DateTimeImmutable::createFromInterface($listedDate);
 
         return $this;
     }
