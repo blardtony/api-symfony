@@ -12,7 +12,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /** A manufacturer */
 #[ORM\Entity(repositoryClass: ManufacturerRepository::class)]
-#[ApiResource]
+#[
+    ApiResource(
+        attributes: ["pagination_items_per_page" => 5]
+    )
+]
 class Manufacturer
 {
     /** The id of the manufacturer  */
