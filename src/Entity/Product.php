@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[
     ApiResource(
+        attributes: ["pagination_items_per_page" => 5],
         denormalizationContext: ['groups' => ['product.write']],
         normalizationContext: ['groups' => ['product.read']]
     ),
@@ -58,7 +59,7 @@ class Product
     /** The date of issue of the product */
     #[ORM\Column]
     #[Assert\NotNull]
-    #[Groups(['product.read'])]
+    #[Groups(['product.read', 'product.write'])]
     private ?\DateTimeImmutable $issueDate = null;
 
     /** The MPN (manufacturer part number) of the product */
@@ -69,7 +70,8 @@ class Product
 
     /** The manufacturer of the product */
     #[ORM\ManyToOne(inversedBy: 'products')]
-    #[Groups(['product.read'])]
+    #[Groups(['product.read', 'product.write'])]
+    #[Assert\NotNull]
     private ?Manufacturer $manufacturer = null;
 
 
