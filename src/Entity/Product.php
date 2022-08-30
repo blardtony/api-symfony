@@ -16,6 +16,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[
     ApiResource(
+        collectionOperations: [
+            'get',
+            'post' => ['security' => 'is_granted("ROLE_ADMIN")']
+        ],
+        itemOperations: [
+            'get',
+            'put' => [
+                'security' => 'is_granted("ROLE_USER") and object.getOwner() === user',
+                'security_message' => 'A product can only be updated by the owner'
+            ]
+        ],
         attributes: ["pagination_items_per_page" => 5],
         denormalizationContext: ['groups' => ['product.write']],
         normalizationContext: ['groups' => ['product.read']]
@@ -73,6 +84,10 @@ class Product
     #[Groups(['product.read', 'product.write'])]
     #[Assert\NotNull]
     private ?Manufacturer $manufacturer = null;
+
+    #[ORM\ManyToOne]
+    #[Groups(['product.read', 'product.write'])]
+    private ?User $owner = null;
 
 
     public function getId(): ?int
@@ -140,6 +155,18 @@ class Product
     public function setManufacturer(?Manufacturer $manufacturer): self
     {
         $this->manufacturer = $manufacturer;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }
