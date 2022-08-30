@@ -20,6 +20,13 @@ use Symfony\Component\Validator\Constraints as Assert;
             'get',
             'post' => ['security' => 'is_granted("ROLE_ADMIN")']
         ],
+        itemOperations: [
+            'get',
+            'put' => [
+                'security' => 'is_granted("ROLE_USER") and object.getOwner() === user',
+                'security_message' => 'A product can only be updated by the owner'
+            ]
+        ],
         attributes: ["pagination_items_per_page" => 5],
         denormalizationContext: ['groups' => ['product.write']],
         normalizationContext: ['groups' => ['product.read']]
